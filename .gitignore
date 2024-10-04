@@ -1,0 +1,5 @@
+.cache
+build
+src/*.gen.*
+*.calc
+compile_commands.json
