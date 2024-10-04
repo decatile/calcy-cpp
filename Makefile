@@ -1,5 +1,5 @@
 all: clean compile
-	build/out
+	build/out file.calc
 
 compile:
 	mkdir -p build

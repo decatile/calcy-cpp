@@ -1,11 +1,11 @@
 #pragma once
 
 #include <string>
-#include <unordered_map>
+#include <map>
 #include <vector>
 struct Expr;
 
-enum class ExprType { REF, VAL, BIN, INP };
+enum class ExprType { REF, VAL, BIN };
 
 enum class BinaryExprType { ADD, SUB, MUL, DIV };
 
@@ -40,5 +40,5 @@ bool variable_exists(char *varname);
 
 extern int lineno;
 extern std::vector<std::string> def_varnames;
-extern std::unordered_map<std::string, Assign *> assigns_map;
+extern std::map<std::string, Assign *> assigns_map;
 extern Expr *out_expr;

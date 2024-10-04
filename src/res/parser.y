@@ -54,7 +54,7 @@ assign_stmt:
 	IDENT '=' expression NEWLINE {
 		if (set_assign($1, $3) != 0) {
 			std::ostringstream s;
-			s << "variable '" << $1 << "'' already defined";
+			s << "variable '" << $1 << "' already defined";
 			yyerror(s.str().c_str());
 		}
 		lineno++;

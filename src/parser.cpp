@@ -1,11 +1,9 @@
 #include "parser.hpp"
 #include <algorithm>
-#include <iostream>
-#include <sstream>
 
 int lineno = 1;
 std::vector<std::string> def_varnames;
-std::unordered_map<std::string, Assign *> assigns_map;
+std::map<std::string, Assign *> assigns_map;
 Expr *out_expr;
 
 Expr *make_val_expr(double val) {
