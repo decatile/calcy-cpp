@@ -56,7 +56,7 @@ int main(int argc, char **argv) {
     std::cin >> buf;
     resolved_def_varnames.insert(std::make_pair(*it, buf));
   }
-  for (auto it = assigns_map.begin(); it != assigns_map.end(); it++) {
+  for (auto it = assign_pairs.begin(); it != assign_pairs.end(); it++) {
     auto result = execute_expr(it->second->expr, resolved_def_varnames);
     resolved_def_varnames.insert(std::make_pair(it->first, result));
   }

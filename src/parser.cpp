@@ -3,7 +3,7 @@
 
 int lineno = 1;
 std::vector<std::string> def_varnames;
-std::map<std::string, Assign *> assigns_map;
+std::vector<std::pair<std::string, Assign *>> assign_pairs;
 Expr *out_expr;
 
 Expr *make_val_expr(double val) {
@@ -61,11 +61,12 @@ int set_assign(char *varname, Expr *expr) {
       def_varnames.end()) {
     return 1;
   }
-  auto found = assigns_map.find(varname);
-  if (found != assigns_map.end()) {
+  auto found = std::find_if(assign_pairs.begin(), assign_pairs.end(),
+                            [=](auto p) { return p.first == varname; });
+  if (found != assign_pairs.end()) {
     return found->second->at;
   }
-  assigns_map.insert(
+  assign_pairs.push_back(
       std::make_pair(varname, new Assign{.expr = expr, .at = 234}));
   return 0;
 }
@@ -73,5 +74,7 @@ int set_assign(char *varname, Expr *expr) {
 bool variable_exists(char *varname) {
   return (std::find(def_varnames.begin(), def_varnames.end(), varname) !=
           def_varnames.end()) ||
-         (assigns_map.find(varname) != assigns_map.end());
+         (std::find_if(assign_pairs.begin(), assign_pairs.end(), [=](auto p) {
+            return p.first == varname;
+          }) != assign_pairs.end());
 }

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <string>
-#include <map>
+#include <utility>
 #include <vector>
 struct Expr;
 
@@ -40,5 +40,5 @@ bool variable_exists(char *varname);
 
 extern int lineno;
 extern std::vector<std::string> def_varnames;
-extern std::map<std::string, Assign *> assigns_map;
+extern std::vector<std::pair<std::string, Assign *>> assign_pairs;
 extern Expr *out_expr;
