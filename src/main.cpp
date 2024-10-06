@@ -2,6 +2,8 @@
 #include <cstdio>
 #include <cstdlib>
 #include <iostream>
+#include <string>
+#include <unistd.h>
 #include <unordered_map>
 #include <utility>
 
@@ -72,5 +74,5 @@ int main(int argc, char **argv) {
     resolved_def_varnames.insert(std::make_pair(it->first, result));
   }
   auto result = execute_expr(out_expr, resolved_def_varnames);
-  std::cout << "Result: " << result << "\n";
+  std::cout << result << "\n";
 }

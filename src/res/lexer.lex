@@ -10,7 +10,7 @@
 
 "def"                  return DEFINE;
 "out"                  return OUTPUT;
-[1-9][0-9]*(\.[0-9]+)? { yylval.numval = std::stod(yytext); return NUMBER; }
+[0-9]+(\.[0-9]+)? { yylval.numval = std::stod(yytext); return NUMBER; }
 [a-zA-Z_][a-zA-Z0-9]*  { yylval.strval = strdup(yytext); return IDENT; }
 "+"                    return '+';
 "-"                    return '-';

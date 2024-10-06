@@ -1,0 +1,4 @@
+def a
+b = a * pow(a, 0.5)
+c = (2 * a) / b
+out random() * c
