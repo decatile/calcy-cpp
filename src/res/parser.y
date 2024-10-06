@@ -34,9 +34,17 @@ void yyerror(const char *s);
 %%
 
 program:
-	def_stmt out_stmt
+	program_maybe_def program_maybe_assigns out_stmt
+;
+
+program_maybe_def:
+	def_stmt
 	|
-	def_stmt assign_stmts out_stmt
+;
+
+program_maybe_assigns:
+	assign_stmts
+	|
 ;
 
 def_stmt:
@@ -111,6 +119,23 @@ expression:
 			yyerror(s.str().c_str());
 		}
 		$$ = make_call_expr($1, $3);
+	}
+	|
+	IDENT '(' ')' {
+		Expr** e = new Expr*[1];
+		*e = NULL;
+		auto exists = function_exists($1, e);
+		if (exists < 1) {
+			std::ostringstream s;
+			s << "function '" << $1 << "' requires " << -exists << " arguments";
+			yyerror(s.str().c_str());
+		}
+		if (exists == 1) {
+			std::ostringstream s;
+			s << "function '" << $1 << "' not found";
+			yyerror(s.str().c_str());
+		}
+		$$ = make_call_expr($1, e);
 	}
 ;
 

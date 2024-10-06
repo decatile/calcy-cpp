@@ -2,7 +2,6 @@
 #include <algorithm>
 #include <cstddef>
 #include <cstring>
-#include <iostream>
 #include <string>
 
 int lineno = 1;
