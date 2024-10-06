@@ -7,10 +7,20 @@
 
 extern FILE *yyin;
 extern int yyparse();
+void load_functions();
 
 double execute_expr(Expr *expr,
                     std::unordered_map<std::string, double> &resolved) {
   switch (expr->kind) {
+  case ExprType::CALL: {
+    auto func = functions[expr->call->name];
+    std::vector<double> funcargs;
+    while (*expr->call->args) {
+      funcargs.push_back(execute_expr(*expr->call->args, resolved));
+      expr->call->args++;
+    }
+    return func.ptr(funcargs);
+  }
   case ExprType::REF:
     return resolved[expr->ref];
   case ExprType::VAL:
@@ -48,6 +58,7 @@ int main(int argc, char **argv) {
     std::cerr << "Cannot open input file\n";
     return 1;
   }
+  load_functions();
   yyparse();
   std::unordered_map<std::string, double> resolved_def_varnames;
   for (auto it = def_varnames.begin(); it != def_varnames.end(); it++) {

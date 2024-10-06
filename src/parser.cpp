@@ -1,10 +1,22 @@
 #include "parser.hpp"
 #include <algorithm>
+#include <cstddef>
+#include <cstring>
+#include <iostream>
+#include <string>
 
 int lineno = 1;
 std::vector<std::string> def_varnames;
 std::vector<std::pair<std::string, Assign *>> assign_pairs;
 Expr *out_expr;
+std::unordered_map<std::string, CalcyFunction> functions;
+
+Expr *make_call_expr(char *name, Expr **args) {
+  Expr *e = new Expr;
+  e->call = new CallExpr{.name = name, .args = args};
+  e->kind = ExprType::CALL;
+  return e;
+}
 
 Expr *make_val_expr(double val) {
   Expr *e = new Expr;
@@ -47,6 +59,26 @@ char **defargs_join(char **a, char *b) {
   return a;
 }
 
+Expr **exprargs_create(Expr *name) {
+  Expr **r = new Expr *[2];
+  r[0] = name;
+  r[1] = NULL;
+  return r;
+}
+
+Expr **exprargs_join(Expr **a, Expr *b) {
+  size_t len = 0;
+  Expr **a1 = a;
+  while (*a1) {
+    len++;
+    a1++;
+  }
+  a = (Expr **)std::realloc(a, sizeof(Expr *) * (len + 2));
+  a[len] = b;
+  a[len + 1] = NULL;
+  return a;
+}
+
 void set_def(char **varnames) {
   while (*varnames) {
     def_varnames.push_back(*varnames);
@@ -77,4 +109,20 @@ bool variable_exists(char *varname) {
          (std::find_if(assign_pairs.begin(), assign_pairs.end(), [=](auto p) {
             return p.first == varname;
           }) != assign_pairs.end());
+}
+
+int function_exists(char *name, Expr **args) {
+  auto found = functions.find(name);
+  if (found == functions.end())
+    return 1;
+  auto fun = found->second;
+  size_t argslen = 0;
+  while (*args) {
+    argslen++;
+    args++;
+  }
+  if (fun.argcount != argslen) {
+    return -fun.argcount;
+  }
+  return 2;
 }

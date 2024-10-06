@@ -4,6 +4,7 @@
 #include <cstdio>
 #include <iostream>
 #include <sstream>
+#include <cstring>
 
 int yylex(void);
 void yyerror(const char *s);
@@ -15,6 +16,7 @@ void yyerror(const char *s);
 	char* strval;
 	Expr* exprval;
 	char** strsval;
+	Expr** exprsval;
 }
 
 %token <strval> IDENT
@@ -27,10 +29,13 @@ void yyerror(const char *s);
 
 %type <strsval> def_args
 %type <exprval> expression
+%type <exprsval> expression_comma
 
 %%
 
 program:
+	def_stmt out_stmt
+	|
 	def_stmt assign_stmts out_stmt
 ;
 
@@ -66,6 +71,11 @@ out_stmt:
 	|
 	OUTPUT expression NEWLINE { set_out($2); }
 
+expression_comma:
+	expression { $$ = exprargs_create($1); }
+	|
+	expression_comma ',' expression { $$ = exprargs_join($1, $3); }
+
 expression:
 	expression '+' expression { $$ = make_binary_expr($1, $3, BinaryExprType::ADD); }
   |
@@ -86,6 +96,21 @@ expression:
 			yyerror(s.str().c_str());
 		}
 		$$ = make_ref_expr($1);
+	}
+	|
+	IDENT '(' expression_comma ')' {
+		auto exists = function_exists($1, $3);
+		if (exists < 1) {
+			std::ostringstream s;
+			s << "function '" << $1 << "' requires " << -exists << " arguments";
+			yyerror(s.str().c_str());
+		}
+		if (exists == 1) {
+			std::ostringstream s;
+			s << "function '" << $1 << "' not found";
+			yyerror(s.str().c_str());
+		}
+		$$ = make_call_expr($1, $3);
 	}
 ;
 
