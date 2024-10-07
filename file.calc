@@ -1,4 +1,4 @@
-def a
-b = a * pow(a, 0.5)
-c = (2 * a) / b
-out random() * c
+def a, b
+c = ceil(a)
+d = min(10, b)
+out min(a, max(b, c)) + pow(d, 2) + random()
